@@ -1,0 +1,76 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Contact {
+  id          BigInt  @id @default(autoincrement())
+  Img         String?
+  Title       String? @db.VarChar
+  Url         String?
+  Coordonnees String? @db.VarChar
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Education {
+  id               BigInt             @id @default(autoincrement())
+  Title            String?            @db.VarChar
+  Description      String?
+  Date             DateTime?          @db.Date
+  Education_Skills Education_Skills[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Education_Skills {
+  id           BigInt     @id @default(autoincrement())
+  id_Education BigInt?
+  id_Skills    BigInt?
+  Education    Education? @relation(fields: [id_Education], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Education_Skills_id_Education_fkey")
+  Skills       Skills?    @relation(fields: [id_Skills], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Education_Skills_id_Skills_fkey")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Projects {
+  id              BigInt            @id(map: "Projets_pkey") @default(autoincrement())
+  Img             String?
+  Title           String            @db.VarChar
+  Description     String
+  Slug            String?           @db.VarChar
+  GitUrl          String?
+  WebUrl          String?
+  Skills          String?           @db.VarChar
+  Projects_Skills Projects_Skills[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Projects_Skills {
+  id          BigInt    @id @default(autoincrement())
+  id_projects BigInt?
+  id_skills   BigInt?
+  Projects    Projects? @relation(fields: [id_projects], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Projects-Skills_id_projects_fkey")
+  Skills      Skills?   @relation(fields: [id_skills], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "public_Projects-Skills_id_skills_fkey")
+
+  @@map("Projects-Skills")
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Skills {
+  id               BigInt             @id @default(autoincrement())
+  Img              String?
+  Title            String?            @db.VarChar
+  Education_Skills Education_Skills[]
+  Projects_Skills  Projects_Skills[]
+}
+
+/// This model contains row level security and requires additional setup for migrations. Visit https://pris.ly/d/row-level-security for more info.
+model Social {
+  id   BigInt  @id @default(autoincrement())
+  name String? @db.VarChar
+  img  String?
+  url  String?
+}
